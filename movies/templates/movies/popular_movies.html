@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Популярные фильмы{% endblock %}
+
+{% block content %}   
+<div class="container">
+    <div class="header">
+    <h1>Популярные фильмы</h1>
+    <a href="{% url 'playlist' %}?page={{ page }}" 
+       hx-get="{% url 'playlist' %}?page={{ page }}"
+       hx-target="#content"
+       hx-push-url="true"
+       class="playlist-btn" >Плейлист</a>
+    </div>
+    
+    <span class="page-info">Страница {{ page }} из {{ total_pages }}</span>
+
+    <div class="movies-container">
+        {% for movie in movies %}
+            <a href="{% url 'movie_detail' movie.tmdb_id %}?next={{ request.get_full_path }}" 
+               hx-get="{% url 'movie_detail' movie.tmdb_id %}?next={{ request.get_full_path }}"
+               hx-target="#content"
+               hx-push-url="true"
+               class="movie-card">
+                {% if movie.poster_url %}
+                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                {% endif %}
+                <div class="movie-title">{{ movie.title }}</div>
+                <div class="release-date">{{ movie.release_date }}</div>
+                <div class="rating">⭐ {{ movie.rating }}</div>
+                <div class="overview">{{ movie.overview|truncatewords:20 }}</div>
+            </a>
+        {% endfor %}
+    </div>
+    <div class="pagination">
+        <a href="?page={{ prev_page }}"
+           hx-get="?page={{ prev_page }}"
+           hx-target="#content"
+           hx-push-url="true"
+           class="page-btn {% if page == 1 %}disabled{% endif %}">Назад</a>
+        <a href="?page={{ next_page }}"
+           hx-get="?page={{ next_page }}"
+           hx-target="#content"
+           hx-push-url="true"
+           class="page-btn {% if page == total_pages %}disabled{% endif %}">Вперёд</a>       
+    </div>
+    <p>Выберите страницу от 1 до 500</p>
+    <div class="page-form-container">   
+    <h4>На страницу:</h4>   
+    <form method="get" class="page-form" hx-get="." hx-target="#content" hx-push-url="true">
+            <input type="number" name="page" min="1" max="{{ total_pages }}" value="{{ page }}">
+            <button type="submit">Перейти</button>
+    </form>
+    </div>
+</div>
+<script>
+document.addEventListener("htmx:afterSwap", (event) => {
+     if ( event.detail.target.id === "content") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Киносайт{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'movies/style.css' %}">
+    <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+</head>
+<body>
+<audio id="bgMusic" autoplay loop muted style="display:none;">
+    <source src="{% static 'movies/music.mp3' %}" type="audio/mpeg">
+</audio>
+<div id="content" hx-target="this" hx-swap="innerHTML">
+    {% block content %}{% endblock %}
+</div>
+<script>
+(function() {          
+    const audio = document.getElementById('bgMusic');
+    if (!audio) return;
+    let audioStarted = false;
+
+    function startAudio() {
+        if (audioStarted) return;
+        audioStarted = true;
+        audio.muted = false;
+        audio.play().catch(e => {
+            console.log("Автовоспроизведение заблокировано:", e);
+        });
+}    
+    document.addEventListener('click', startAudio, { once: true });
+    document.addEventListener('keydown', startAudio, { once: true });
+    document.addEventListener('touchstart', startAudio, { once: true });
+    document.addEventListener('scroll', startAudio, { passive: true });
+
+})();
+</script>  
+      
+</body>
+</html>

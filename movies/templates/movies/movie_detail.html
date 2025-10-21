@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+    {% block title %}{{ movie.title }}{% endblock %}
+    {% block content %}
+<div class="container">
+
+    <div class="movie-hero"
+         style="background-image: url('{{ movie.backdrop_url }}');">
+        <div class="movie-hero-content">
+            <h1>{{ movie.title }}</h1>
+            {% if movie.original_title and movie.original_title != movie.title %}
+                <h3 class="original-title">({{ movie.original_title }})</h3>
+            {% endif %}
+            <p>Рейтинг: {{ movie.rating }} ⭐ ({{ movie.stars }}/5)</p>
+            <p>Дата выхода: {{ movie.release_date }}</p>
+        </div>
+    </div>
+
+    <div class="movie-description">
+        <h2>Описание</h2>
+        <p>{{ movie.overview }}</p>
+
+        {% if movie.genres %}
+            <p><b>Жанры:</b> {{ movie.genres|join:", " }}</p>
+        {% endif %}
+
+        {% if movie.runtime %}
+            <p><b>Продолжительность:</b> {{ movie.runtime }} мин</p>
+        {% endif %}
+    </div>
+    <hr>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next|default:request.get_full_path }}">
+        <div class="playlist-btn-container"
+            hx-post="{% url 'add_to_playlist' movie.tmdb_id %}"
+            hx-vals='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'
+            hx-target="this"
+            hx-swap="outerHTML">
+        <button type="button" style="padding: 10px 20px; color: white; border: none; border-radius: 5px; cursor: pointer; background-color: {% if in_playlist %}red{% else %}#007BFF{% endif %}; margin-bottom: 10px;"
+         {% if in_playlist %}disabled{% endif %}
+        >
+        {% if in_playlist %}Добавлено{% else %}Добавить в плейлист{% endif %}   
+        </button>
+        </div>
+    <a href="{{ request.GET.next|default:'/movies/' }}"
+       hx-get="{{ request.GET.next|default:'/movies/' }}"
+       hx-target="#content"
+       hx-push-url="true" 
+       class="back-btn">Назад</a>
+</div>
+{% endblock %}

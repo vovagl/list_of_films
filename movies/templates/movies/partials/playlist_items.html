@@ -1,0 +1,25 @@
+{% load static %}
+{% for item in items %}
+<div class="movie-card">
+    <a href="/movies/{{ item.tmdb_id }}/?next=/movies/playlist/?page={{ page }}"
+       hx-get="/movies/{{ item.tmdb_id }}/?next=/movies/playlist/?page={{ page }}"
+       hx-target="#content"
+       hx-push-url="true"
+       class="movie-link">
+        {% if item.poster_url %}
+            <img src="{{ item.poster_url }}" alt="{{ item.title }}">
+        {% else %}
+            <img src="{% static 'movies/no-poster.jpg' %}" alt="Нет постера">
+        {% endif %}
+        <div class="movie-title">{{ item.title }}</div>
+    </a>
+    <form method="post" 
+          action="/movies/playlist/remove/{{ item.id }}/"
+          hx-post="/movies/playlist/remove/{{ item.id }}/"
+          hx-target="#playlist-content"
+          hx-swap="innerHTML">
+        {% csrf_token %}
+        <button type="submit" class="remove-btn">Удалить</button>
+    </form>
+</div>
+{% endfor %}

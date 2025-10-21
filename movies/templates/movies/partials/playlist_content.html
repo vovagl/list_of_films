@@ -1,0 +1,21 @@
+{% load static %}
+<div class="container" id="playlist-content">
+    <h1>Мой плейлист</h1>
+    <h2>Смотреть позже</h2>
+    <p><b>Всего фильмов:</b> {{ items|length }}</p>
+
+    <div class="movies-container" id="playlist-items">
+        {% include "movies/partials/playlist_items.html" %}
+    </div>
+
+    {% if not items %}
+        <p>Плейлист пуст. Добавьте фильмы.</p>
+    {% endif %}
+
+    <br>
+    <a href="/movies/?page={{ movies_page }}"
+       hx-get="/movies/?page={{ movies_page }}"
+       hx-target="#content"
+       hx-push-url="true"
+       class="page-btn">На главную</a>
+</div>

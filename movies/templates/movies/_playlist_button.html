@@ -1,0 +1,14 @@
+<div class="playlist-btn-container"
+     hx-post="{% url 'add_to_playlist' tmdb_id %}"
+     hx-vals='{"csrfmiddlewaretoken": "{{ csrf_token }}",
+               "title": "{{ movie.title }}",
+               "poster_url": "{{ movie.poster_url }}"
+     }'
+     hx-target="this"
+     hx-swap="outerHTML">
+    <button type="button"
+            style="padding: 10px 20px; color: white; border: none; border-radius: 5px; cursor: pointer; background-color: {% if in_playlist %}red{% else %}#007BFF{% endif %}; margin-bottom: 10px;"
+            {% if in_playlist %}disabled{% endif %}>
+        {% if in_playlist %}Добавлено{% else %}Добавить в плейлист{% endif %}
+    </button>
+</div>

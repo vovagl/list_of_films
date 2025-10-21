@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="movie-hero"
+         style="background-image: url('{{ movie.backdrop_url|default:"/static/movies/no-poster.jpg" }}');">
+        <div class="movie-hero-content">
+            <h1>{{ movie.title }}</h1>
+            {% if movie.original_title and movie.original_title != movie.title %}
+                <h3 class="original-title">({{ movie.original_title }})</h3>
+            {% endif %}
+            <p>Рейтинг: {{ movie.rating|default:"-" }} ⭐ ({{ movie.stars|default:"-" }}/5)</p>
+            <p>Дата выхода: {{ movie.release_date|default:"-" }}</p>
+        </div>
+    </div>
+
+    <div class="movie-description">
+        <h2>Описание</h2>
+        <p>{{ movie.overview|default:"Описание отсутствует" }}</p>
+
+        {% if movie.genres %}
+            <p><b>Жанры:</b> {{ movie.genres|join:", " }}</p>
+        {% endif %}
+
+        {% if movie.runtime %}
+            <p><b>Продолжительность:</b> {{ movie.runtime }} мин</p>
+        {% endif %}
+    </div>
+
+    <hr>
+    <div class="playlist-btn-container"
+         hx-post="{% url 'add_to_playlist' movie.tmdb_id %}"
+         hx-vals='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'
+         hx-target="this"
+         hx-swap="outerHTML">
+    {% include "movies/_playlist_button.html" %}    
+    </div>
+
+    <a href="{{ next_url }}"
+       hx-get="{{ next_url }}"
+       hx-target="#content"
+       hx-push-url="true"
+       class="back-btn">Назад</a>
+</div>
